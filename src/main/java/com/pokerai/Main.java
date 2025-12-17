@@ -2,7 +2,6 @@ package com.pokerai;
 
 import com.pokerai.training.TrainingEngine;
 import com.pokerai.simulator.GameSimulator;
-import com.pokerai.simulator.GameResult;
 import java.util.Scanner;
 
 /**
@@ -29,10 +28,7 @@ public class Main {
             System.out.println();
             System.out.println("开始单局详细演示...");
             GameSimulator simulator = new GameSimulator();
-            GameResult result = simulator.playOneGameWithDetails();
-            if (result == null) {
-                System.out.println("未产生有效结果。");
-            }
+            simulator.playOneGameWithDetails();
         } else {
             // 获取训练参数
             System.out.print("请输入训练局数（建议10000-100000）: ");
@@ -65,4 +61,5 @@ public class Main {
         scanner.close();
     }
 }
+
 

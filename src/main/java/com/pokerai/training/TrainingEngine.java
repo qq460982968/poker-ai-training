@@ -19,6 +19,9 @@ public class TrainingEngine {
     public TrainingEngine() {
         this.simulator = new GameSimulator();
         this.aiPlayer = simulator.getAIPlayer();
+        
+        // 启动时尝试加载历史经验库（如果存在）
+        this.aiPlayer.loadExperience();
     }
     
     /**
@@ -55,6 +58,9 @@ public class TrainingEngine {
         
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
+        
+        // 训练结束后持久化经验库
+        this.aiPlayer.saveExperience();
         
         System.out.println("----------------------------------------");
         System.out.println("训练完成！");
@@ -131,4 +137,5 @@ public class TrainingEngine {
         }
     }
 }
+
 

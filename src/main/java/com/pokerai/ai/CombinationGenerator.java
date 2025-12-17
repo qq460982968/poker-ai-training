@@ -53,10 +53,16 @@ public class CombinationGenerator {
             List<Card> newGroup = new ArrayList<>(combination);
             currentGroups.add(newGroup);
             
-            // 从剩余牌中移除已使用的牌
-            List<Card> newRemaining = new ArrayList<>(remaining);
-            for (Card card : combination) {
-                newRemaining.remove(card);
+            // 从剩余牌中移除已使用的牌（使用Set提高效率并避免重复移除问题）
+            Set<Card> usedCards = new HashSet<>(combination);
+            List<Card> newRemaining = new ArrayList<>();
+            for (Card card : remaining) {
+                if (!usedCards.contains(card)) {
+                    newRemaining.add(card);
+                } else {
+                    // 从usedCards中移除，确保每张牌只移除一次
+                    usedCards.remove(card);
+                }
             }
             
             // 递归生成下一组
@@ -146,4 +152,5 @@ public class CombinationGenerator {
         return groupKeys.toString();
     }
 }
+
 

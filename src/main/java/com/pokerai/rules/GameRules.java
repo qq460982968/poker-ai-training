@@ -93,13 +93,13 @@ public class GameRules {
 
         if (isFlush && isStraight) {
             if (isRoyalStraight(sorted)) {
-                return new HandResult(HandType.ROYAL_FLUSH, 1000 + encodeValues(sorted), sorted);
+                return new HandResult(HandType.ROYAL_FLUSH, 900 + encodeValues(sorted), sorted);
             }
-            return new HandResult(HandType.STRAIGHT_FLUSH, 900 + encodeValues(sorted), sorted);
+            return new HandResult(HandType.STRAIGHT_FLUSH, 800 + encodeValues(sorted), sorted);
         }
 
         if (isThreeOfAKind(sorted)) {
-            return new HandResult(HandType.THREE_OF_A_KIND, 800 + sorted.get(0).getValue(), sorted);
+            return new HandResult(HandType.THREE_OF_A_KIND, 1000 + sorted.get(0).getValue(), sorted);
         }
 
         if (isFlush) {
@@ -197,6 +197,23 @@ public class GameRules {
      * 获取高牌值
      */
     /**
+     * 获取花色的优先级（用于比较）
+     * 黑桃(SPADES) > 红桃(HEARTS) > 梅花(CLUBS) > 方块(DIAMONDS)
+     */
+    private static int getSuitPriority(Card.Suit suit) {
+        if (suit == null) {
+            return -1; // 万能牌优先级最低
+        }
+        switch (suit) {
+            case SPADES:   return 4;  // 黑桃最大
+            case HEARTS:   return 3;  // 红桃
+            case CLUBS:    return 2;  // 梅花
+            case DIAMONDS: return 1;  // 方块最小
+            default:       return 0;
+        }
+    }
+    
+    /**
      * 比较两个牌组的结果
      * @return 正数表示result1更强，负数表示result2更强，0表示平局
      */
@@ -209,28 +226,48 @@ public class GameRules {
         if (scoreCompare != 0) {
             return scoreCompare;
         }
-        return compareByCards(result1.getCards(), result2.getCards());
+        return compareByCards(result1.getCards(), result2.getCards(), result1.getHandType());
     }
 
-    private static int compareByCards(List<Card> cards1, List<Card> cards2) {
+    /**
+     * 比较两组牌（考虑花色优先级）
+     * @param cards1 第一组牌
+     * @param cards2 第二组牌
+     * @param handType 牌型（用于特殊处理同花）
+     */
+    private static int compareByCards(List<Card> cards1, List<Card> cards2, HandType handType) {
+        // 如果是同花，优先比较花色（黑桃 > 红桃 > 梅花 > 方块）
+        if (handType == HandType.FLUSH || handType == HandType.STRAIGHT_FLUSH || handType == HandType.ROYAL_FLUSH) {
+            Card.Suit suit1 = cards1.get(0).getSuit();
+            Card.Suit suit2 = cards2.get(0).getSuit();
+            int suitCompare = Integer.compare(getSuitPriority(suit1), getSuitPriority(suit2));
+            if (suitCompare != 0) {
+                return suitCompare;
+            }
+            // 如果花色相同，继续比较点数
+        }
+        
         List<Card> sorted1 = new ArrayList<>(cards1);
         List<Card> sorted2 = new ArrayList<>(cards2);
 
+        // 先按点数排序，再按花色优先级排序
         Comparator<Card> comparator = Comparator
             .comparingInt(Card::getValue)
-            .thenComparing(card -> card.getSuit() != null ? card.getSuit().ordinal() : -1);
+            .thenComparing(card -> getSuitPriority(card.getSuit()));
 
         sorted1.sort(comparator);
         sorted2.sort(comparator);
 
+        // 从大到小比较（先比较最大的牌）
         for (int i = sorted1.size() - 1; i >= 0; i--) {
             int valueCompare = Integer.compare(sorted1.get(i).getValue(), sorted2.get(i).getValue());
             if (valueCompare != 0) {
                 return valueCompare;
             }
+            // 如果点数相同，比较花色优先级
             int suitCompare = Integer.compare(
-                sorted1.get(i).getSuit() != null ? sorted1.get(i).getSuit().ordinal() : -1,
-                sorted2.get(i).getSuit() != null ? sorted2.get(i).getSuit().ordinal() : -1
+                getSuitPriority(sorted1.get(i).getSuit()),
+                getSuitPriority(sorted2.get(i).getSuit())
             );
             if (suitCompare != 0) {
                 return suitCompare;
@@ -316,4 +353,5 @@ public class GameRules {
         return playerScore > opponentScore;
     }
 }
+
 

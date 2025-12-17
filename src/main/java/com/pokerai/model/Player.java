@@ -13,6 +13,7 @@ public class Player {
     private List<List<Card>> cardGroups; // 组合后的牌组（例如：3+3+3的组合）
     private int wins; // 获胜次数
     private int games; // 参与游戏次数
+    private boolean surrendered; // 是否投降
     
     public Player(int id, String name) {
         this.id = id;
@@ -21,6 +22,7 @@ public class Player {
         this.cardGroups = new ArrayList<>();
         this.wins = 0;
         this.games = 0;
+        this.surrendered = false;
     }
     
     /**
@@ -75,9 +77,24 @@ public class Player {
         return games == 0 ? 0.0 : (double) wins / games;
     }
     
+    /**
+     * 设置投降状态
+     */
+    public void setSurrendered(boolean surrendered) {
+        this.surrendered = surrendered;
+    }
+    
+    /**
+     * 是否投降
+     */
+    public boolean isSurrendered() {
+        return surrendered;
+    }
+    
     @Override
     public String toString() {
         return name + " (ID: " + id + ", 胜率: " + String.format("%.2f%%", getWinRate() * 100) + ")";
     }
 }
+
 

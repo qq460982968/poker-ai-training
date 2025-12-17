@@ -41,9 +41,12 @@
                 <version>3.1.0</version>
                 <configuration>
                     <mainClass>com.pokerai.Main</mainClass>
-                    <options>
-                        <option>-Dfile.encoding=UTF-8</option>
-                    </options>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>file.encoding</key>
+                            <value>UTF-8</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
             

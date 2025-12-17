@@ -96,7 +96,7 @@ public class Card {
     @Override
     public String toString() {
         if (isJoker()) {
-            return jokerType == JokerType.BIG ? "BJ" : "SJ";
+            return jokerType == JokerType.BIG ? "大王" : "小王";
         }
         return rank.getDisplay() + suit.getSymbol();
     }
@@ -120,4 +120,5 @@ public class Card {
         return suit.hashCode() * 31 + rank.hashCode();
     }
 }
+
 

@@ -1,6 +1,5 @@
 package com.pokerai;
 
-import com.pokerai.simulator.GameResult;
 import com.pokerai.simulator.GameSimulator;
 
 /**
@@ -13,11 +12,9 @@ public class DetailedDemo {
 
     public static void main(String[] args) {
         GameSimulator simulator = new GameSimulator();
-        GameResult result = simulator.playOneGameWithDetails();
-        if (result == null) {
-            System.out.println("本次演示未产生有效结果。");
-        }
+        simulator.playOneGameWithDetails();
     }
 }
+
 
 
